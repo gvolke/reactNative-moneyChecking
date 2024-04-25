@@ -75,11 +75,11 @@ const Input: React.ForwardRefRenderFunction<InputRef, InputProps> = (
       <Icon
         name={icon}
         size={20}
-        color={isFocused || isFilled ? "#f7db55" : "#5b5b5b"}
+        color={isFocused || isFilled ? "#3fd5c8" : "#4169e1"}
       />
       <Text
         ref={inputElementRef}
-        placeholderTextColor="#666360"
+        placeholderTextColor="#5b5b5b"
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}
         defaultValue={defaultValue}

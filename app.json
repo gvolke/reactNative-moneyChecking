@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "appgobarber",
-    "slug": "appgobarber",
+    "name": "moneychecking",
+    "slug": "moneychecking",
     "version": "1.0.0",
     "orientation": "portrait",
     "jsEngine": "hermes",

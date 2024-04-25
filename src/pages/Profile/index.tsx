@@ -164,7 +164,7 @@ const Profile: React.FC = () => {
         >
           <Container>
             <BackButton onPress={handleGoBack}>
-              <Feather name="chevron-left" size={24} color="#999591" />
+              <Feather name="chevron-left" size={24} color="#4169e1" />
             </BackButton>
 
             <UserAvatarButton onPress={handleUpdateAvatar}>

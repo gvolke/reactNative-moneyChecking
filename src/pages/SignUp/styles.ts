@@ -12,7 +12,7 @@ export const Container = styled.View`
 
 export const Title = styled.Text`
   font-size: 20px;
-  color: #f7db55;
+  color: #4169e1;
   font-family: "robotoslab-medium";
   margin: 64px 0 24px;
 `
@@ -22,7 +22,7 @@ export const BackToSignIn = styled.TouchableOpacity`
   left: 0;
   bottom: 0;
   right: 0;
-  background: #e9e9e9;
+  background: #b4ccfc;
   border-top-width: 1px;
   border-color: #fffafa;
   padding: 16px 0 ${16 + getBottomSpace()}px;
