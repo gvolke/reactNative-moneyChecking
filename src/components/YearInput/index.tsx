@@ -39,6 +39,7 @@ const YearInput: React.ForwardRefRenderFunction<InputRef, InputProps> = (
         placeholderTextColor="#5b5b5b"
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}
+        keyboardType="numeric"
         onChangeText={(value) => "value"}
         {...rest}
       />

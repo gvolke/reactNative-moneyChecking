@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack"
 
 import Dashboard from "../pages/Dashboard"
 import Profile from "../pages/Profile"
-import CreateAppointment from "../pages/CreateAppointment"
+import CreateTransaction from "../pages/CreateTransaction"
 import AppointmentCreated from "../pages/AppointmentCreated"
 
 const App = createNativeStackNavigator()
@@ -16,7 +16,7 @@ const AuthRoutes: React.FC = () => (
     }}
   >
     <App.Screen name="Dashboard" component={Dashboard} />
-    <App.Screen name="CreateAppointment" component={CreateAppointment} />
+    <App.Screen name="CreateTransaction" component={CreateTransaction} />
     <App.Screen name="AppointmentCreated" component={AppointmentCreated} />
 
     <App.Screen name="Profile" component={Profile} />

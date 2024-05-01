@@ -1,7 +1,11 @@
 import { FlatList, FlatListProps } from "react-native"
-import styled from "styled-components/native"
+import styled, { css } from "styled-components/native"
 import { getStatusBarHeight } from "react-native-iphone-x-helper"
 import { Transaction } from "."
+
+interface balanceProps {
+  isNegative: boolean
+}
 
 export const Container = styled.View`
   flex: 1;
@@ -108,9 +112,16 @@ export const TransactionValue = styled.Text`
   font-family: "robotoslab-regular";
 `
 
-export const TransactionBalance = styled.Text`
+export const TransactionBalance = styled.Text<balanceProps>`
   font-size: 16px;
-  font-family: "robotoslab-regular";
+  font-family: "robotoslab-medium";
+  color: green;
+
+  ${(props) =>
+    props.isNegative &&
+    css`
+      color: #dc143c;
+    `}
 `
 
 export const CreateTransactionButton = styled.TouchableOpacity`

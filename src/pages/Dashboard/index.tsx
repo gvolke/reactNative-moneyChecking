@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { format, parseISO } from "date-fns"
 
 import api from "../../services/api"
@@ -72,12 +72,17 @@ const Dashboard: React.FC = () => {
   const { user } = useAuth()
   const { navigate } = useNavigation<any>()
 
+  useEffect(() => {
+    handleSearch()
+  }, [])
+
   const handleMonthChange = useCallback((value: number) => {
     setSelectedMonth(value)
   }, [])
 
   const handleYearChange = useCallback((value: string) => {
-    setYear(value)
+    const numeroFormatado = value.replace(/[^0-9]/g, "")
+    setYear(numeroFormatado)
   }, [])
 
   const handleSearch = useCallback(async () => {
@@ -95,12 +100,9 @@ const Dashboard: React.FC = () => {
     navigate("Profile")
   }, [navigate])
 
-  const navigateToCreateAppointment = useCallback(
-    (providerId: string) => {
-      navigate("CreateAppointment", { providerId })
-    },
-    [navigate]
-  )
+  const navigateToCreateTransaction = useCallback(() => {
+    navigate("CreateTransaction")
+  }, [navigate])
 
   return (
     <Container>
@@ -136,7 +138,7 @@ const Dashboard: React.FC = () => {
 
         <YearInput
           name="Ano"
-          icon="rewind"
+          icon="clock"
           placeholder="Year"
           onChangeText={handleYearChange}
           isFilled={!!year}
@@ -179,15 +181,17 @@ const Dashboard: React.FC = () => {
               <TransactionValue>
                 R$ {data.transaction.value.toString()}
               </TransactionValue>
-              <TransactionBalance>
-                R$ {data.balance.toString()}
+              <TransactionBalance
+                isNegative={Number(data.balance) < 0 ? true : false}
+              >
+                R$ {data.balance.toFixed(2).toString()}
               </TransactionBalance>
             </TransactionInfo>
           </TransactionContainer>
         )}
       />
 
-      <CreateTransactionButton>
+      <CreateTransactionButton onPress={navigateToCreateTransaction}>
         <CreateTransactionButtonText>+</CreateTransactionButtonText>
       </CreateTransactionButton>
     </Container>
