@@ -41,4 +41,26 @@ export const UserAvatar = styled.Image`
 export const Data = styled.View`
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
+
+  margin: 8px;
+`
+
+export const Calendar = styled.View`
+  width: 100%;
+  margin-bottom: 8px;
+`
+
+export const OpenDatePickerButton = styled.TouchableOpacity`
+  height: 60px;
+  background: #4169e1;
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+`
+
+export const OpenDatePickerButtonText = styled.Text`
+  font-family: "robotoslab-medium";
+  font-size: 16px;
+  color: white;
 `

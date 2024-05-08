@@ -131,6 +131,7 @@ const SignIn: React.FC = () => {
                 onPress={() => {
                   formRef.current?.submitForm()
                 }}
+                color="#4169e1"
               >
                 Entrar
               </Button>

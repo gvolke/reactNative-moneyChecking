@@ -7,7 +7,7 @@ interface ComboBoxProps {
   data: { label: any; value: any }[]
   iconName: string
   value: any
-  selectionChange: (value: number) => void
+  selectionChange: (value: any) => void
   dropDownStyle?: {}
 }
 

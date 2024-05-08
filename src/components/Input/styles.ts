@@ -33,6 +33,7 @@ export const Container = styled.View<ContainerProps>`
 
 export const Text = styled.TextInput`
   flex: 1;
+  height: 100%;
   color: #5b5b5b;
   font-size: 16px;
   font-family: "robotoslab-regular";

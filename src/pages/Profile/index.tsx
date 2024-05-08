@@ -27,6 +27,8 @@ import {
   Title,
   UserAvatarButton,
   UserAvatar,
+  LogOutButton,
+  ButtonContainer,
 } from "./styles"
 import { useAuth } from "../../hooks/auth"
 
@@ -39,7 +41,7 @@ interface ProfileFormData {
 }
 
 const Profile: React.FC = () => {
-  const { user, updateUser } = useAuth()
+  const { user, updateUser, signOut } = useAuth()
 
   const formRef = useRef<FormHandles>(null)
   const navigation = useNavigation()
@@ -151,6 +153,10 @@ const Profile: React.FC = () => {
     navigation.goBack()
   }, [navigation])
 
+  const handleSignOut = useCallback(() => {
+    signOut()
+  }, [])
+
   return (
     <>
       <KeyboardAvoidingView
@@ -163,9 +169,15 @@ const Profile: React.FC = () => {
           keyboardShouldPersistTaps="handled"
         >
           <Container>
-            <BackButton onPress={handleGoBack}>
-              <Feather name="chevron-left" size={24} color="#4169e1" />
-            </BackButton>
+            <ButtonContainer>
+              <BackButton onPress={handleGoBack}>
+                <Feather name="chevron-left" size={24} color="#4169e1" />
+              </BackButton>
+
+              <LogOutButton onPress={handleSignOut}>
+                <Feather name="log-out" size={24} color="#4169e1" />
+              </LogOutButton>
+            </ButtonContainer>
 
             <UserAvatarButton onPress={handleUpdateAvatar}>
               <UserAvatar source={{ uri: user.avatar_url }} />
@@ -245,6 +257,7 @@ const Profile: React.FC = () => {
                 onPress={() => {
                   formRef.current?.submitForm()
                 }}
+                color="#4169e1"
               >
                 Confirmar Mudanças
               </Button>

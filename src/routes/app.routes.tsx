@@ -12,7 +12,7 @@ const AuthRoutes: React.FC = () => (
   <App.Navigator
     screenOptions={{
       headerShown: false,
-      contentStyle: { backgroundColor: "#312e38" },
+      contentStyle: { backgroundColor: "#f5f5f5" },
     }}
   >
     <App.Screen name="Dashboard" component={Dashboard} />

@@ -6,7 +6,6 @@ export const Container = styled.View`
   justify-content: center;
   padding: 0 30px ${Platform.OS === "android" ? 160 : 40}px;
   position: relative;
-  background-color: #f5f5f5;
 `
 
 export const Title = styled.Text`
@@ -27,6 +26,14 @@ export const UserAvatar = styled.Image`
   align-self: center;
 `
 
-export const BackButton = styled.TouchableOpacity`
+export const BackButton = styled.TouchableOpacity``
+
+export const LogOutButton = styled.TouchableOpacity``
+
+export const ButtonContainer = styled.View`
   margin-top: 150px;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 `

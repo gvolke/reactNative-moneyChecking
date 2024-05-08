@@ -144,6 +144,8 @@ const SignUp: React.FC = () => {
                 onPress={() => {
                   formRef.current?.submitForm()
                 }}
+                color="#4169e1"
+                width="100%"
               >
                 Entrar
               </Button>

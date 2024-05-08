@@ -7,6 +7,7 @@ import { useAuth } from "../../hooks/auth"
 
 import { Feather } from "@expo/vector-icons"
 
+import Button from "../../components/Button"
 import ComboBox from "../../components/ComboBox"
 import YearInput from "../../components/YearInput"
 
@@ -43,8 +44,7 @@ import {
   TransactionDate,
   TransactionType,
   TransactionValue,
-  CreateTransactionButton,
-  CreateTransactionButtonText,
+  ButtonContainer,
 } from "./styles"
 
 export interface Transaction {
@@ -129,8 +129,6 @@ const Dashboard: React.FC = () => {
             borderWidth: 1.5,
             borderRadius: 10,
             padding: 16,
-            marginTop: 16,
-            marginLeft: 8,
             marginRight: 8,
             flex: 4,
           }}
@@ -139,7 +137,7 @@ const Dashboard: React.FC = () => {
         <YearInput
           name="Ano"
           icon="clock"
-          placeholder="Year"
+          placeholder="Ano"
           onChangeText={handleYearChange}
           isFilled={!!year}
           value={year}
@@ -148,7 +146,6 @@ const Dashboard: React.FC = () => {
             borderWidth: 1.5,
             borderRadius: 10,
             padding: 16,
-            marginTop: 16,
             marginRight: 8,
             flex: 2,
           }}
@@ -170,7 +167,11 @@ const Dashboard: React.FC = () => {
                   "dd/MM/yyyy"
                 ).toString()}
               </TransactionDate>
-              <TransactionType>{data.transaction.type}</TransactionType>
+              <TransactionType
+                isNegative={data.transaction.type === "SAIDA" ? true : false}
+              >
+                {data.transaction.type}
+              </TransactionType>
             </TransactionHeader>
 
             <TransactionInfo>
@@ -181,9 +182,7 @@ const Dashboard: React.FC = () => {
               <TransactionValue>
                 R$ {data.transaction.value.toString()}
               </TransactionValue>
-              <TransactionBalance
-                isNegative={Number(data.balance) < 0 ? true : false}
-              >
+              <TransactionBalance>
                 R$ {data.balance.toFixed(2).toString()}
               </TransactionBalance>
             </TransactionInfo>
@@ -191,9 +190,11 @@ const Dashboard: React.FC = () => {
         )}
       />
 
-      <CreateTransactionButton onPress={navigateToCreateTransaction}>
-        <CreateTransactionButtonText>+</CreateTransactionButtonText>
-      </CreateTransactionButton>
+      <ButtonContainer>
+        <Button onPress={navigateToCreateTransaction} color="#3fd5c8">
+          +
+        </Button>
+      </ButtonContainer>
     </Container>
   )
 }

@@ -48,6 +48,7 @@ export const UserAvatar = styled.Image`
 export const FieldsContainer = styled.View`
   display: flex;
   flex-direction: row;
+  margin: 8px;
 `
 
 export const ButtonSearch = styled.TouchableOpacity`
@@ -57,8 +58,6 @@ export const ButtonSearch = styled.TouchableOpacity`
   border-radius: 15px;
 
   border: solid 1px #ccdbfc;
-
-  margin: 16px 8px 0 0;
 
   flex: 1.3;
 
@@ -72,7 +71,7 @@ export const TransactionContainer = styled.View`
   flex-direction: row;
   align-items: center;
 
-  margin: 8px;
+  margin: 0px 8px 8px 8px;
   padding: 10px;
   border: 1.5px solid #4169e1;
   border-radius: 15px;
@@ -97,9 +96,16 @@ export const TransactionDate = styled.Text`
   color: #4169e1;
 `
 
-export const TransactionType = styled.Text`
+export const TransactionType = styled.Text<balanceProps>`
   font-size: 16px;
   font-family: "robotoslab-medium";
+  color: green;
+
+  ${(props) =>
+    props.isNegative &&
+    css`
+      color: #dc143c;
+    `}
 `
 
 export const TransactionDescription = styled.Text`
@@ -112,33 +118,15 @@ export const TransactionValue = styled.Text`
   font-family: "robotoslab-regular";
 `
 
-export const TransactionBalance = styled.Text<balanceProps>`
+export const TransactionBalance = styled.Text`
   font-size: 16px;
   font-family: "robotoslab-medium";
-  color: green;
-
-  ${(props) =>
-    props.isNegative &&
-    css`
-      color: #dc143c;
-    `}
-`
-
-export const CreateTransactionButton = styled.TouchableOpacity`
-  height: 50px;
-  background: #3fd5c8;
-  border-radius: 10px;
-  align-items: center;
-  justify-content: center;
-  margin: 0 8px 8px;
-`
-
-export const CreateTransactionButtonText = styled.Text`
-  font-family: "robotoslab-medium";
-  font-size: 25px;
-  color: #ffffff;
 `
 
 export const TransactionsList = styled(
   FlatList as new (props: FlatListProps<Transaction>) => FlatList<Transaction>
 )``
+
+export const ButtonContainer = styled.View`
+  margin: 8px;
+`
