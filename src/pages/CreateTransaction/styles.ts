@@ -28,6 +28,8 @@ export const HeaderTitle = styled.Text`
   margin-left: 16px;
 `
 
+export const ProfileButton = styled.TouchableOpacity``
+
 export const UserAvatar = styled.Image`
   width: 56px;
   height: 56px;
@@ -63,4 +65,14 @@ export const OpenDatePickerButtonText = styled.Text`
   font-family: "robotoslab-medium";
   font-size: 16px;
   color: white;
+`
+
+export const CalendarHeader = styled.Text`
+  display: flex;
+  align-self: center;
+  padding: 8px;
+
+  font-size: 24px;
+  font-family: "robotoslab-medium";
+  color: #3fd5c8;
 `

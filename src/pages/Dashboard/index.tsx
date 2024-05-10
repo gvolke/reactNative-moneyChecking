@@ -74,7 +74,7 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     handleSearch()
-  }, [])
+  }, [transactions])
 
   const handleMonthChange = useCallback((value: number) => {
     setSelectedMonth(value)

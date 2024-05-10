@@ -4,6 +4,9 @@ import { useAuth } from "../../hooks/auth"
 
 import { Feather } from "@expo/vector-icons"
 
+import { format } from "date-fns"
+
+import * as Yup from "yup"
 import { Form } from "@unform/mobile"
 import { FormHandles } from "@unform/core"
 
@@ -21,9 +24,11 @@ import {
   Header,
   BackButton,
   HeaderTitle,
+  ProfileButton,
   UserAvatar,
   Data,
   Calendar,
+  CalendarHeader,
   OpenDatePickerButton,
   OpenDatePickerButtonText,
 } from "./styles"
@@ -34,8 +39,8 @@ const CreateTransaction: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [type, setType] = useState<string>("SAIDA")
   const [value, setValue] = useState<string>()
-  const [description, setDescription] = useState<string>()
-  const [observation, setObservation] = useState<string>()
+  const [description, setDescription] = useState<string>("")
+  const [observation, setObservation] = useState<string>("")
   const [showDatePicker, setShowDatePicker] = useState(false)
   const { goBack, navigate } = useNavigation<any>()
   const { user } = useAuth()
@@ -46,21 +51,44 @@ const CreateTransaction: React.FC = () => {
 
   const handleAddTransaction = useCallback(async () => {
     try {
-      const formattedValue = Number(value)
+      let formattedValue = Number(value)
+      if (isNaN(formattedValue)) {
+        formattedValue = 0
+      }
 
-      await api.post("transactions", {
+      const data = {
         date: selectedDate,
         description,
         observation,
         type,
         value: formattedValue,
+      }
+
+      const schema = Yup.object().shape({
+        date: Yup.date().required("A data é obrigatória."),
+        description: Yup.string().required("A descrição é obrigatória."),
+        observation: Yup.string(),
+        value: Yup.number().notOneOf([0, undefined], "Valor inválido."),
       })
 
+      await schema.validate(data, {
+        abortEarly: false,
+      })
+
+      await api.post("transactions", data)
+
+      Alert.alert("Lançamento cadastrado com sucesso!")
       navigate("Dashboard")
     } catch (err) {
+      let yupError: string = ""
+
+      if (err instanceof Yup.ValidationError) {
+        yupError = err.inner[0].message
+      }
+
       Alert.alert(
         "Erro ao criar lançamento",
-        "Ocorreu um erro ao criar o lançamento, tente novamente"
+        "Ocorreu um erro ao criar o lançamento. " + yupError
       )
     }
   }, [selectedDate, description, observation, type])
@@ -104,6 +132,10 @@ const CreateTransaction: React.FC = () => {
     setShowDatePicker((state) => !state)
   }, [])
 
+  const navigateToProfile = useCallback(() => {
+    navigate("Profile")
+  }, [navigate])
+
   return (
     <Container>
       <Header>
@@ -113,12 +145,20 @@ const CreateTransaction: React.FC = () => {
 
         <HeaderTitle>Criar Lançamento</HeaderTitle>
 
-        <UserAvatar source={{ uri: user.avatar_url }} />
+        <ProfileButton onPress={navigateToProfile}>
+          <UserAvatar source={{ uri: user.avatar_url }} />
+        </ProfileButton>
       </Header>
 
       <Form ref={formRef} onSubmit={handleAddTransaction}>
         <Data>
           <Calendar>
+            <CalendarHeader>
+              {`Data Selecionada: ${format(
+                selectedDate,
+                "dd/MM/yyyy"
+              ).toString()}`}
+            </CalendarHeader>
             <OpenDatePickerButton onPress={handleToggleDatePicker}>
               <OpenDatePickerButtonText>
                 Selecionar uma data
