@@ -47,7 +47,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
 
   useEffect(() => {
     async function loadStoredData(): Promise<void> {
-      const tokenTemp = await AsyncStorage.getItem("@GoBarber:token")
+      const tokenTemp = await AsyncStorage.getItem("@MoneyChecking:token")
 
       if (tokenTemp) {
         try {
@@ -57,8 +57,8 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
 
           if (currentTime > tokenExpiry) {
             await AsyncStorage.multiRemove([
-              "@GoBarber:token",
-              "@GoBarber:user",
+              "@MoneyChecking:token",
+              "@MoneyChecking:user",
             ])
           }
         } catch (error) {
@@ -67,8 +67,8 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
       }
 
       const [token, user] = await AsyncStorage.multiGet([
-        "@GoBarber:token",
-        "@GoBarber:user",
+        "@MoneyChecking:token",
+        "@MoneyChecking:user",
       ])
 
       if (token[1] && user[1]) {
@@ -92,8 +92,8 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     const { token, user } = response.data
 
     await AsyncStorage.multiSet([
-      ["@GoBarber:token", token],
-      ["@GoBarber:user", JSON.stringify(user)],
+      ["@MoneyChecking:token", token],
+      ["@MoneyChecking:user", JSON.stringify(user)],
     ])
 
     api.defaults.headers.authorization = `Bearer ${token}`
@@ -102,14 +102,17 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
   }, [])
 
   const signOut = useCallback(async () => {
-    await AsyncStorage.multiRemove(["@GoBarber:token", "@GoBarber:user"])
+    await AsyncStorage.multiRemove([
+      "@MoneyChecking:token",
+      "@MoneyChecking:user",
+    ])
 
     setData({} as AuthState)
   }, [])
 
   const updateUser = useCallback(
     async (user: User) => {
-      await AsyncStorage.setItem("@GoBarber:user", JSON.stringify(user))
+      await AsyncStorage.setItem("@MoneyChecking:user", JSON.stringify(user))
 
       setData({
         token: data.token,

@@ -19,7 +19,7 @@ import getValidationErrors from "../../utils/getValidationErrors"
 import { Form } from "@unform/mobile"
 import { FormHandles } from "@unform/core"
 
-import Input from "../../components/Input"
+import Input from "../../components/InputUnform"
 import Button from "../../components/Button"
 
 import logoImg from "../../assets/Logo.png"

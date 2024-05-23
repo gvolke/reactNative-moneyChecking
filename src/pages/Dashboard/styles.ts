@@ -82,6 +82,8 @@ export const TransactionContainer = styled.View`
 export const TransactionInfo = styled.View`
   display: flex;
   flex-direction: column;
+
+  flex: 1;
 `
 
 export const TransactionHeader = styled.View`
@@ -111,6 +113,8 @@ export const TransactionType = styled.Text<balanceProps>`
 export const TransactionDescription = styled.Text`
   font-size: 16px;
   font-family: "robotoslab-medium";
+
+  flex: 1;
 `
 
 export const TransactionValue = styled.Text`

@@ -18,7 +18,7 @@ import api from "../../services/api"
 
 import getValidationErrors from "../../utils/getValidationErrors"
 
-import Input from "../../components/Input"
+import Input from "../../components/InputUnform"
 import Button from "../../components/Button"
 
 import {

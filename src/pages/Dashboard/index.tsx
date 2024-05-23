@@ -1,15 +1,16 @@
-import React, { useCallback, useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState, useRef } from "react"
+import { TextInput } from "react-native"
 import { format, parseISO } from "date-fns"
 
-import api from "../../services/api"
 import { useNavigation } from "@react-navigation/native"
 import { useAuth } from "../../hooks/auth"
+import { useTransaction } from "../../hooks/transaction"
 
 import { Feather } from "@expo/vector-icons"
 
 import Button from "../../components/Button"
 import ComboBox from "../../components/ComboBox"
-import YearInput from "../../components/YearInput"
+import Input from "../../components/Input"
 
 const months = [
   { label: "Janeiro", value: "1" },
@@ -63,18 +64,27 @@ export interface Transaction {
 const Dashboard: React.FC = () => {
   const date = new Date()
 
+  const yearInputRef = useRef<TextInput>(null)
+
   const [selectedMonth, setSelectedMonth] = useState<number>(
     date.getMonth() + 1
   )
-  const [year, setYear] = useState<string>(date.getFullYear().toString())
-  const [transactions, setTransactions] = useState<Transaction[]>([])
+  const [selectedYear, setYear] = useState<string>(
+    date.getFullYear().toString()
+  )
+  const { transactions, month, year, fetchTransactions } = useTransaction()
 
   const { user } = useAuth()
   const { navigate } = useNavigation<any>()
 
   useEffect(() => {
+    handleMonthChange(month)
+    handleYearChange(year)
+  }, [month, year])
+
+  useEffect(() => {
     handleSearch()
-  }, [transactions])
+  }, [])
 
   const handleMonthChange = useCallback((value: number) => {
     setSelectedMonth(value)
@@ -86,15 +96,10 @@ const Dashboard: React.FC = () => {
   }, [])
 
   const handleSearch = useCallback(async () => {
-    const response = await api.get("/usertransactions/month", {
-      params: {
-        month: selectedMonth,
-        year: year,
-      },
-    })
+    await fetchTransactions({ month: selectedMonth, year: selectedYear })
 
-    setTransactions(response.data)
-  }, [selectedMonth, year])
+    yearInputRef.current?.blur()
+  }, [selectedMonth, selectedYear])
 
   const navigateToProfile = useCallback(() => {
     navigate("Profile")
@@ -134,13 +139,13 @@ const Dashboard: React.FC = () => {
           }}
         />
 
-        <YearInput
+        <Input
+          ref={yearInputRef}
           name="Ano"
           icon="clock"
           placeholder="Ano"
           onChangeText={handleYearChange}
-          isFilled={!!year}
-          value={year}
+          value={selectedYear}
           containerStyle={{
             height: 60,
             borderWidth: 1.5,
@@ -180,10 +185,10 @@ const Dashboard: React.FC = () => {
               </TransactionDescription>
 
               <TransactionValue>
-                R$ {data.transaction.value.toString()}
+                Valor: R$ {data.transaction.value.toString()}
               </TransactionValue>
               <TransactionBalance>
-                R$ {data.balance.toFixed(2).toString()}
+                Saldo: R$ {data.balance.toFixed(2).toString()}
               </TransactionBalance>
             </TransactionInfo>
           </TransactionContainer>
