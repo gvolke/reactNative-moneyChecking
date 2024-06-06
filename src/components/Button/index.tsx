@@ -8,9 +8,16 @@ interface ButtonProps extends RectButtonProperties {
   children: string
   color: string
   width?: DimensionValue
+  enabled?: boolean
 }
 
-const Button: React.FC<ButtonProps> = ({ children, color, width, ...rest }) => {
+const Button: React.FC<ButtonProps> = ({
+  children,
+  color,
+  enabled = true,
+  width,
+  ...rest
+}) => {
   return (
     <Container
       style={{
@@ -18,6 +25,7 @@ const Button: React.FC<ButtonProps> = ({ children, color, width, ...rest }) => {
         backgroundColor: color,
         width,
       }}
+      enabled={enabled}
       {...rest}
     >
       <ButtonText>{children}</ButtonText>

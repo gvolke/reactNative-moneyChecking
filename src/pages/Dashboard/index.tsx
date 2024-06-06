@@ -62,17 +62,12 @@ export interface Transaction {
 }
 
 const Dashboard: React.FC = () => {
-  const date = new Date()
-
   const yearInputRef = useRef<TextInput>(null)
 
-  const [selectedMonth, setSelectedMonth] = useState<number>(
-    date.getMonth() + 1
-  )
-  const [selectedYear, setYear] = useState<string>(
-    date.getFullYear().toString()
-  )
   const { transactions, month, year, fetchTransactions } = useTransaction()
+
+  const [selectedMonth, setSelectedMonth] = useState<number>(month)
+  const [selectedYear, setYear] = useState<string>(year)
 
   const { user } = useAuth()
   const { navigate } = useNavigation<any>()
@@ -86,20 +81,26 @@ const Dashboard: React.FC = () => {
     handleSearch()
   }, [])
 
-  const handleMonthChange = useCallback((value: number) => {
-    setSelectedMonth(value)
-  }, [])
-
-  const handleYearChange = useCallback((value: string) => {
-    const numeroFormatado = value.replace(/[^0-9]/g, "")
-    setYear(numeroFormatado)
-  }, [])
+  const handleMonthChange = useCallback(
+    (value: number) => {
+      setSelectedMonth(value)
+    },
+    [month]
+  )
 
   const handleSearch = useCallback(async () => {
     await fetchTransactions({ month: selectedMonth, year: selectedYear })
 
     yearInputRef.current?.blur()
   }, [selectedMonth, selectedYear])
+
+  const handleYearChange = useCallback(
+    (value: string) => {
+      const numeroFormatado = value.replace(/[^0-9]/g, "")
+      setYear(numeroFormatado)
+    },
+    [year]
+  )
 
   const navigateToProfile = useCallback(() => {
     navigate("Profile")
@@ -108,6 +109,13 @@ const Dashboard: React.FC = () => {
   const navigateToCreateTransaction = useCallback(() => {
     navigate("CreateTransaction")
   }, [navigate])
+
+  const navigateToTransactionDetails = useCallback(
+    (transactionId: string) => {
+      navigate("TransactionDetails", { id: transactionId })
+    },
+    [navigate]
+  )
 
   return (
     <Container>
@@ -164,7 +172,11 @@ const Dashboard: React.FC = () => {
       <TransactionsList
         data={transactions}
         renderItem={({ item: data }) => (
-          <TransactionContainer>
+          <TransactionContainer
+            onPress={() => {
+              navigateToTransactionDetails(data.transaction.id)
+            }}
+          >
             <TransactionHeader>
               <TransactionDate>
                 {format(

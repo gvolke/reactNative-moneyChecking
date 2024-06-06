@@ -3,12 +3,14 @@ import { Feather } from "@expo/vector-icons"
 
 interface ContainerProps {
   isFocused: boolean
+  editable: boolean
 }
 
 export const Container = styled.View<ContainerProps>`
   width: 100%;
   height: 60px;
   padding: 0 16px;
+
   background-color: #f8f8ff;
   border-radius: 10px;
   margin-bottom: 8px;
@@ -16,6 +18,12 @@ export const Container = styled.View<ContainerProps>`
 
   flex-direction: row;
   align-items: center;
+
+  ${(props) =>
+    props.editable === false &&
+    css`
+      background-color: #f0ffff;
+    `}
 
   ${(props) =>
     props.isFocused &&

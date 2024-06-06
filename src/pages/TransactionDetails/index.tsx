@@ -1,11 +1,10 @@
-import { useCallback, useState, useRef } from "react"
-import { TextInput } from "react-native"
+import { useCallback, useState, useRef, useEffect } from "react"
+import { useRoute, RouteProp } from "@react-navigation/native"
 import { useNavigation } from "@react-navigation/native"
-import { useAuth } from "../../hooks/auth"
 import { useTransaction } from "../../hooks/transaction"
 
 import { Feather } from "@expo/vector-icons"
-
+import { TextInput } from "react-native"
 import { format } from "date-fns"
 
 import * as Yup from "yup"
@@ -21,46 +20,73 @@ import {
   Container,
   Header,
   BackButton,
-  HeaderTitle,
-  ProfileButton,
-  UserAvatar,
+  DeleteButton,
+  EditButton,
   Data,
   Calendar,
   CalendarHeader,
-  OpenDatePickerButton,
-  OpenDatePickerButtonText,
 } from "./styles"
 
-const CreateTransaction: React.FC = () => {
-  const [selectedDate, setSelectedDate] = useState(new Date())
+type RootStackParamList = {
+  TransactionDetails: { id: string }
+}
+
+type TransactionDetailsRouteProp = RouteProp<
+  RootStackParamList,
+  "TransactionDetails"
+>
+
+const TransactionDetails: React.FC = () => {
+  const route = useRoute<TransactionDetailsRouteProp>()
+  const { id } = route.params
 
   const valueInputRef = useRef<TextInput>(null)
   const descriptionInputRef = useRef<TextInput>(null)
   const observationInputRef = useRef<TextInput>(null)
 
+  const [selectedDate, setSelectedDate] = useState(new Date())
   const [type, setType] = useState<string>("SAIDA")
-  const [value, setValue] = useState<string>()
+  const [value, setValue] = useState<string>("")
   const [description, setDescription] = useState<string>("")
   const [observation, setObservation] = useState<string>("")
 
   const [showDatePicker, setShowDatePicker] = useState(false)
 
+  const [editable, setIsEditable] = useState<boolean>(false)
+
   const { goBack, navigate } = useNavigation<any>()
-  const { user } = useAuth()
-  const { createTransaction } = useTransaction()
+  const { showTransaction, updateTransaction, deleteTransaction } =
+    useTransaction()
+
+  useEffect(() => {
+    const loadTransactionData = async () => {
+      const transaction = await showTransaction(id)
+
+      setSelectedDate(new Date(transaction.date))
+      setType(transaction.type)
+      setValue(transaction.value.toString())
+
+      setDescription(transaction.description)
+      setObservation(transaction.observation)
+    }
+
+    loadTransactionData()
+  }, [])
 
   const navigateBack = useCallback(() => {
     goBack()
   }, [goBack])
 
-  const handleAddTransaction = useCallback(async () => {
+  const handleUpdateTransaction = useCallback(async () => {
     try {
       let formattedValue = Number(value)
+
       if (isNaN(formattedValue)) {
         formattedValue = 0
       }
 
       const data = {
+        id,
         date: selectedDate,
         description,
         observation,
@@ -79,9 +105,9 @@ const CreateTransaction: React.FC = () => {
         abortEarly: false,
       })
 
-      await createTransaction(data)
+      await updateTransaction(data)
 
-      Alert.alert("Lançamento cadastrado com sucesso!")
+      Alert.alert("Lançamento alterado com sucesso!")
       navigate("Dashboard")
     } catch (err) {
       let yupError: string = ""
@@ -91,11 +117,11 @@ const CreateTransaction: React.FC = () => {
       }
 
       Alert.alert(
-        "Erro ao criar lançamento",
-        "Ocorreu um erro ao criar o lançamento. " + yupError
+        "Erro ao salvar edição",
+        "Ocorreu um erro ao salvar a edição do lançamento. " + yupError
       )
     }
-  }, [selectedDate, description, observation, type])
+  }, [selectedDate, description, observation, type, value])
 
   const handleDateChanged = useCallback(
     (event: any, date: Date | undefined) => {
@@ -136,9 +162,20 @@ const CreateTransaction: React.FC = () => {
     setShowDatePicker((state) => !state)
   }, [])
 
-  const navigateToProfile = useCallback(() => {
-    navigate("Profile")
-  }, [navigate])
+  const Editable = useCallback((value: boolean) => {
+    setIsEditable(value)
+  }, [])
+
+  const handleDeleteTransaction = useCallback(async () => {
+    await deleteTransaction(
+      id,
+      selectedDate.getMonth() + 1,
+      selectedDate.getFullYear().toString()
+    )
+
+    Alert.alert("Lançamento excluído com sucesso!")
+    navigate("Dashboard")
+  }, [selectedDate])
 
   return (
     <Container>
@@ -147,26 +184,35 @@ const CreateTransaction: React.FC = () => {
           <Feather name="chevron-left" size={24} color="#4169e1" />
         </BackButton>
 
-        <HeaderTitle>Criar Lançamento</HeaderTitle>
+        <EditButton
+          onPress={() => {
+            Editable(true)
+          }}
+        >
+          <Feather name="edit" size={24} color="#4169e1" />
+        </EditButton>
 
-        <ProfileButton onPress={navigateToProfile}>
-          <UserAvatar source={{ uri: user.avatar_url }} />
-        </ProfileButton>
+        <DeleteButton onPress={handleDeleteTransaction}>
+          <Feather name="trash-2" size={24} color="#4169e1" />
+        </DeleteButton>
       </Header>
 
       <Data>
         <Calendar>
           <CalendarHeader>
-            {`Data Selecionada: ${format(
+            {`Data Lançamento: ${format(
               selectedDate,
               "dd/MM/yyyy"
             ).toString()}`}
           </CalendarHeader>
-          <OpenDatePickerButton onPress={handleToggleDatePicker}>
-            <OpenDatePickerButtonText>
-              Selecionar uma data
-            </OpenDatePickerButtonText>
-          </OpenDatePickerButton>
+          <Button
+            onPress={handleToggleDatePicker}
+            color="#4169e1"
+            width="100%"
+            enabled={editable}
+          >
+            Selecionar uma data
+          </Button>
           {showDatePicker && (
             <DateTimePicker
               mode="date"
@@ -185,9 +231,9 @@ const CreateTransaction: React.FC = () => {
           iconName="activity"
           selectionChange={handleTypeChange}
           value={type}
+          disabled={!editable}
           dropDownStyle={{
             height: 60,
-            backgroundColor: "#f8f8ff",
             borderWidth: 1.5,
             borderRadius: 10,
             padding: 16,
@@ -201,6 +247,7 @@ const CreateTransaction: React.FC = () => {
           ref={valueInputRef}
           name="value"
           icon="dollar-sign"
+          editable={editable}
           placeholder="Valor"
           onChangeText={handleValueChange}
           onSubmitEditing={descriptionInputRef.current?.focus}
@@ -218,6 +265,7 @@ const CreateTransaction: React.FC = () => {
           autoCapitalize="words"
           name="description"
           icon="book-open"
+          editable={editable}
           placeholder="Descrição"
           keyboardType="default"
           onChangeText={handleDescriptionChange}
@@ -230,6 +278,7 @@ const CreateTransaction: React.FC = () => {
           ref={observationInputRef}
           name="observation"
           icon="eye"
+          editable={editable}
           placeholder="Observações"
           returnKeyType="done"
           keyboardType="default"
@@ -245,12 +294,17 @@ const CreateTransaction: React.FC = () => {
           }}
         />
 
-        <Button onPress={handleAddTransaction} color="#3fd5c8" width="100%">
-          +
+        <Button
+          onPress={handleUpdateTransaction}
+          color="#3fd5c8"
+          width="100%"
+          enabled={editable}
+        >
+          Salvar Edições
         </Button>
       </Data>
     </Container>
   )
 }
 
-export default CreateTransaction
+export default TransactionDetails

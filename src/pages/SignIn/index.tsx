@@ -66,17 +66,15 @@ const SignIn: React.FC = () => {
           password: data.password,
         })
       } catch (err) {
+        let yupError = ""
+
         if (err instanceof Yup.ValidationError) {
-          const errors = getValidationErrors(err)
-
-          formRef.current?.setErrors(errors)
-
-          return
+          yupError = err.inner[0].message + "."
         }
 
         Alert.alert(
-          "Erro na autenticação",
-          "Ocorreu um erro ao fazer login, cheque as credenciais"
+          "Erro no cadastro",
+          "Ocorreu um erro ao fazer login, tente novamente. " + yupError
         )
       }
     },

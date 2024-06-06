@@ -1,7 +1,21 @@
 import { FlatList, FlatListProps } from "react-native"
 import styled, { css } from "styled-components/native"
 import { getStatusBarHeight } from "react-native-iphone-x-helper"
-import { Transaction } from "."
+
+interface Transaction {
+  id: string
+  type: string
+  description: string
+  observation: string
+  user_id?: string
+  date: Date
+  value: number
+}
+
+interface TransactionBalance {
+  transaction: Transaction
+  balance: number
+}
 
 interface balanceProps {
   isNegative: boolean
@@ -66,7 +80,7 @@ export const ButtonSearch = styled.TouchableOpacity`
   justify-content: center;
 `
 
-export const TransactionContainer = styled.View`
+export const TransactionContainer = styled.TouchableOpacity`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -128,7 +142,9 @@ export const TransactionBalance = styled.Text`
 `
 
 export const TransactionsList = styled(
-  FlatList as new (props: FlatListProps<Transaction>) => FlatList<Transaction>
+  FlatList as new (
+    props: FlatListProps<TransactionBalance>
+  ) => FlatList<TransactionBalance>
 )``
 
 export const ButtonContainer = styled.View`

@@ -9,6 +9,7 @@ interface ComboBoxProps {
   value: any
   selectionChange: (value: any) => void
   dropDownStyle?: {}
+  disabled?: boolean
 }
 
 const ComboBox: React.FC<ComboBoxProps> = ({
@@ -17,6 +18,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({
   value,
   selectionChange,
   dropDownStyle,
+  disabled = false,
 }) => {
   const [isFocused, setIsFocused] = useState(false)
   const [isFilled, setIsFilled] = useState(false)
@@ -34,9 +36,11 @@ const ComboBox: React.FC<ComboBoxProps> = ({
       style={[
         dropDownStyle,
         { borderColor: isFocused ? "#3fd5c8" : "#4169E1" },
+        { backgroundColor: disabled ? "#f0ffff" : "#f8f8ff" },
       ]}
       data={data}
       value={value}
+      disable={disabled}
       onFocus={handleInputFocus}
       onBlur={handleInputBlur}
       labelField="label"

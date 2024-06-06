@@ -48,7 +48,7 @@ const SignUp: React.FC = () => {
           email: Yup.string()
             .required("E-mail obrigatório")
             .email("Digite um e-mail válido"),
-          password: Yup.string().min(6, "No mínimo 6 dígitos"),
+          password: Yup.string().min(6, "A senha deve ter no mínimo 6 dígitos"),
         })
 
         await schema.validate(data, {
@@ -64,19 +64,15 @@ const SignUp: React.FC = () => {
 
         navigation.goBack()
       } catch (err) {
+        let yupError = ""
+
         if (err instanceof Yup.ValidationError) {
-          const errors = getValidationErrors(err)
-
-          formRef.current?.setErrors(errors)
-
-          return
+          yupError = err.inner[0].message + "."
         }
-
-        console.log(err)
 
         Alert.alert(
           "Erro no cadastro",
-          "Ocorreu um erro ao fazer cadastro, tente novamente"
+          "Ocorreu um erro ao fazer o cadastro, tente novamente. " + yupError
         )
       }
     },
@@ -145,9 +141,8 @@ const SignUp: React.FC = () => {
                   formRef.current?.submitForm()
                 }}
                 color="#4169e1"
-                width="100%"
               >
-                Entrar
+                Cadastrar
               </Button>
             </Form>
           </Container>

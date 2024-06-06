@@ -9,15 +9,17 @@ import React, {
 import api from "../services/api"
 
 interface Transaction {
-  transaction: {
-    id: string
-    type: string
-    description: string
-    observation: string
-    user_id: string
-    date: Date
-    value: number
-  }
+  id: string
+  type: string
+  description: string
+  observation: string
+  user_id?: string
+  date: Date
+  value: number
+}
+
+interface TransactionBalance {
+  transaction: Transaction
   balance: number
 }
 
@@ -35,15 +37,18 @@ interface createTransactionData {
 }
 
 interface TransactionsContextData {
-  transactions: Transaction[]
+  transactions: TransactionBalance[]
   month: number
   year: string
   fetchTransactions({ month, year }: fetchTransactionData): Promise<void>
-  createTransaction(
-    data: createTransactionData,
+  createTransaction(data: createTransactionData): Promise<TransactionBalance>
+  showTransaction(transactionId: string): Promise<Transaction>
+  updateTransaction(transaction: Transaction): Promise<Transaction>
+  deleteTransaction(
+    transactionId: string,
     month: number,
     year: string
-  ): Promise<Transaction>
+  ): Promise<void>
 }
 
 interface Props {
@@ -57,7 +62,7 @@ export const TransactionsContext = createContext<TransactionsContextData>(
 export const TransactionsProvider: React.FC<Props> = ({ children }) => {
   const date = new Date()
 
-  const [transactions, setTransactions] = useState<Transaction[]>([])
+  const [transactions, setTransactions] = useState<TransactionBalance[]>([])
   const [month, setMonth] = useState<number>(date.getMonth() + 1)
   const [year, setYear] = useState<string>(date.getFullYear().toString())
 
@@ -75,20 +80,71 @@ export const TransactionsProvider: React.FC<Props> = ({ children }) => {
     []
   )
 
-  const createTransaction = useCallback(
-    async (data: createTransactionData, month: number, year: string) => {
-      const response = await api.post("transactions", data)
-      const transaction = await response.data
+  const createTransaction = useCallback(async (data: createTransactionData) => {
+    const response = await api.post("transactions", data)
+    const transaction = await response.data
+
+    const { date } = response.data
+    const dateFormatted: Date = new Date(date)
+
+    setMonth(dateFormatted.getMonth() + 1)
+    setYear(dateFormatted.getFullYear().toString())
+
+    fetchTransactions({
+      month: dateFormatted.getMonth() + 1,
+      year: dateFormatted.getFullYear().toString(),
+    })
+
+    return transaction
+  }, [])
+
+  const showTransaction = useCallback(
+    async (transactionId: string): Promise<Transaction> => {
+      const response = await api.get(`/transactions/${transactionId}`)
+
+      return response.data
+    },
+    []
+  )
+
+  const updateTransaction = useCallback(
+    async (transaction: Transaction): Promise<Transaction> => {
+      const response = await api.put("/transactions/", transaction)
+      const updatedTransaction = response.data
+
+      const { date } = response.data
+      const dateFormatted: Date = new Date(date)
+
+      setMonth(dateFormatted.getMonth() + 1)
+      setYear(dateFormatted.getFullYear().toString())
+
+      fetchTransactions({
+        month: dateFormatted.getMonth() + 1,
+        year: dateFormatted.getFullYear().toString(),
+      })
+
+      return updatedTransaction
+    },
+    []
+  )
+
+  const deleteTransaction = useCallback(
+    async (
+      transactionId: string,
+      month: number,
+      year: string
+    ): Promise<void> => {
+      await api.delete(`/transactions/${transactionId}`)
+
+      setMonth(month)
+      setYear(year)
 
       fetchTransactions({
         month,
         year,
       })
 
-      setMonth(month)
-      setYear(year)
-
-      return transaction
+      return
     },
     []
   )
@@ -101,6 +157,9 @@ export const TransactionsProvider: React.FC<Props> = ({ children }) => {
         year,
         fetchTransactions,
         createTransaction,
+        showTransaction,
+        updateTransaction,
+        deleteTransaction,
       }}
     >
       {children}

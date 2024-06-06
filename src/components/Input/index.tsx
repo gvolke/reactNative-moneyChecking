@@ -11,6 +11,7 @@ import { Container, Text, Icon } from "./styles"
 
 interface InputProps extends TextInputProps {
   ref?: React.RefObject<TextInput>
+  editable?: boolean
   name: string
   icon: string
   value: any
@@ -23,7 +24,7 @@ interface InputRef {
 }
 
 const Input: React.ForwardRefRenderFunction<InputRef, InputProps> = (
-  { name, icon, value, containerStyle = {}, ...rest },
+  { name, icon, value, editable = true, containerStyle = {}, ...rest },
   ref
 ) => {
   const [isFocused, setIsFocused] = useState(false)
@@ -49,7 +50,7 @@ const Input: React.ForwardRefRenderFunction<InputRef, InputProps> = (
   }))
 
   return (
-    <Container style={containerStyle} isFocused={isFocused}>
+    <Container style={containerStyle} isFocused={isFocused} editable={editable}>
       <Icon
         name={icon}
         size={20}
@@ -59,6 +60,7 @@ const Input: React.ForwardRefRenderFunction<InputRef, InputProps> = (
         ref={inputElementRef}
         placeholderTextColor="#5b5b5b"
         value={value}
+        editable={editable}
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}
         {...rest}
