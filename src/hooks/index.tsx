@@ -2,6 +2,7 @@ import React, { ReactNode } from "react"
 
 import { AuthProvider } from "./auth"
 import { MessageProvider } from "./message"
+import { TransactionsProvider } from "./transaction"
 
 interface ContextProps {
   children: ReactNode
@@ -9,7 +10,9 @@ interface ContextProps {
 
 const AppProvider: React.FC<ContextProps> = ({ children }) => (
   <AuthProvider>
-    <MessageProvider>{children}</MessageProvider>
+    <MessageProvider>
+      <TransactionsProvider>{children}</TransactionsProvider>
+    </MessageProvider>
   </AuthProvider>
 )
 

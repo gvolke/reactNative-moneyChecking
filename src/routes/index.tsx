@@ -5,7 +5,6 @@ import AuthRoutes from "./auth.routes"
 import AppRoutes from "./app.routes"
 
 import { useAuth } from "../hooks/auth"
-import { TransactionsProvider } from "../hooks/transaction"
 
 const Routes: React.FC = () => {
   const { user, loading } = useAuth()
@@ -21,10 +20,6 @@ const Routes: React.FC = () => {
 }
 
 const App: React.FC = () => {
-  return (
-    <TransactionsProvider>
-      <Routes />
-    </TransactionsProvider>
-  )
+  return <Routes />
 }
 export default App

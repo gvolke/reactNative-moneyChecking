@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React from "react"
 import { Modal } from "react-native"
 import { Feather } from "@expo/vector-icons"
 
@@ -11,13 +11,12 @@ import {
   AlertButtonText,
 } from "./styles"
 
-import { useMessage } from "../../hooks/message"
-
 interface AlertProps {
   description: string
   title: string
   type: "success" | "error" | "info"
   isVisible: boolean
+  removeMessage(): void
 }
 
 const icons = {
@@ -37,9 +36,8 @@ const CustomAlert: React.FC<AlertProps> = ({
   title,
   type,
   isVisible,
+  removeMessage,
 }) => {
-  const { removeMessage } = useMessage()
-
   return (
     <Modal
       transparent={true}

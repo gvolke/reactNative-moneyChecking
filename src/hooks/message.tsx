@@ -6,7 +6,7 @@ import React, {
   useState,
 } from "react"
 
-import CustomAlert from "../components/CustomAlert"
+import CustomAlert from "../components/CustomAlert/"
 
 interface messageType {
   description: string
@@ -57,6 +57,7 @@ const MessageProvider: React.FC<ContextProps> = ({ children }) => {
         type={messages.type}
         title={messages.title}
         isVisible={visible}
+        removeMessage={removeMessage}
       />
     </messageContext.Provider>
   )

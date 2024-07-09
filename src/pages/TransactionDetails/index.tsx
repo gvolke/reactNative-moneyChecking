@@ -115,8 +115,6 @@ const TransactionDetails: React.FC = () => {
         category,
       }
 
-      console.log(data)
-
       const schema = Yup.object().shape({
         date: Yup.date().required("A data é obrigatória."),
         description: Yup.string().required("A descrição é obrigatória."),
