@@ -6,7 +6,6 @@ import {
   View,
   ScrollView,
   TextInput,
-  Alert,
 } from "react-native"
 import { Feather } from "@expo/vector-icons"
 import { useNavigation } from "@react-navigation/native"
@@ -16,14 +15,14 @@ import { FormHandles } from "@unform/core"
 import * as Yup from "yup"
 import api from "../../services/api"
 
-import getValidationErrors from "../../utils/getValidationErrors"
-
 import Input from "../../components/InputUnform"
 import Button from "../../components/Button"
 
 import logoImg from "../../assets/Logo.png"
 
 import { Container, Title, BackToSignIn, BackToSignInText } from "./styles"
+
+import { useMessage } from "../../hooks/message"
 
 interface SignUpFormData {
   name: string
@@ -32,6 +31,8 @@ interface SignUpFormData {
 }
 
 const SignUp: React.FC = () => {
+  const { addMessage } = useMessage()
+
   const formRef = useRef<FormHandles>(null)
   const navigation = useNavigation()
 
@@ -57,10 +58,11 @@ const SignUp: React.FC = () => {
 
         await api.post("/users", data)
 
-        Alert.alert(
-          "Cadastro realizado com sucesso!",
-          "Você já pode fazer login na aplicação"
-        )
+        addMessage({
+          type: "success",
+          title: "Cadastro realizado com sucesso!",
+          description: "Você já pode fazer login na aplicação",
+        })
 
         navigation.goBack()
       } catch (err) {
@@ -70,10 +72,12 @@ const SignUp: React.FC = () => {
           yupError = err.inner[0].message + "."
         }
 
-        Alert.alert(
-          "Erro no cadastro",
-          "Ocorreu um erro ao fazer o cadastro, tente novamente. " + yupError
-        )
+        addMessage({
+          type: "error",
+          title: "Erro no cadastro",
+          description:
+            "Ocorreu um erro ao fazer o cadastro, tente novamente. " + yupError,
+        })
       }
     },
     [navigation]

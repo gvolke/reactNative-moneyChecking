@@ -5,7 +5,6 @@ import {
   View,
   ScrollView,
   TextInput,
-  Alert,
 } from "react-native"
 import { Feather } from "@expo/vector-icons"
 import * as ImagePicker from "expo-image-picker"
@@ -20,6 +19,8 @@ import getValidationErrors from "../../utils/getValidationErrors"
 
 import Input from "../../components/InputUnform"
 import Button from "../../components/Button"
+
+import { useMessage } from "../../hooks/message"
 
 import {
   BackButton,
@@ -42,6 +43,8 @@ interface ProfileFormData {
 
 const Profile: React.FC = () => {
   const { user, updateUser, signOut } = useAuth()
+
+  const { addMessage } = useMessage()
 
   const formRef = useRef<FormHandles>(null)
   const navigation = useNavigation()
@@ -99,7 +102,11 @@ const Profile: React.FC = () => {
 
         updateUser(response.data)
 
-        Alert.alert("Perfil atualizado com sucesso!")
+        addMessage({
+          type: "success",
+          title: "Parabéns",
+          description: "Perfil atualizado com sucesso",
+        })
 
         navigation.goBack()
       } catch (err) {
@@ -113,10 +120,12 @@ const Profile: React.FC = () => {
 
         console.log(err)
 
-        Alert.alert(
-          "Erro na atualização do perfil",
-          "Ocorreu um erro ao atualizar seu perfil, tente novamente"
-        )
+        addMessage({
+          type: "error",
+          title: "Erro na atualização do perfil",
+          description:
+            "Ocorreu um erro ao atualizar seu perfil, tente novamente",
+        })
       }
     },
     [navigation]

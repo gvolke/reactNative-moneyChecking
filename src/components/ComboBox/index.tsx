@@ -10,6 +10,7 @@ interface ComboBoxProps {
   selectionChange: (value: any) => void
   dropDownStyle?: {}
   disabled?: boolean
+  placeholder?: string
 }
 
 const ComboBox: React.FC<ComboBoxProps> = ({
@@ -19,6 +20,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({
   selectionChange,
   dropDownStyle,
   disabled = false,
+  placeholder = "",
 }) => {
   const [isFocused, setIsFocused] = useState(false)
   const [isFilled, setIsFilled] = useState(false)
@@ -45,6 +47,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({
       onBlur={handleInputBlur}
       labelField="label"
       valueField="value"
+      placeholder={placeholder}
       onChange={(item) => {
         selectionChange(item.value)
         setIsFilled(true)

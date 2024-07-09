@@ -16,6 +16,7 @@ interface Transaction {
   user_id?: string
   date: Date
   value: number
+  category: string
 }
 
 interface TransactionBalance {

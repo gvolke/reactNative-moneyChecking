@@ -14,7 +14,9 @@ import Input from "../../components/Input"
 import ComboBox from "../../components/ComboBox"
 
 import DateTimePicker from "@react-native-community/datetimepicker"
-import { Alert, Platform } from "react-native"
+import { Platform } from "react-native"
+
+import { useMessage } from "../../hooks/message"
 
 import {
   Container,
@@ -37,6 +39,22 @@ type TransactionDetailsRouteProp = RouteProp<
 >
 
 const TransactionDetails: React.FC = () => {
+  const { addMessage } = useMessage()
+
+  const categories = [
+    { label: "LAZER", value: "LAZER" },
+    { label: "MERCADO", value: "MERCADO" },
+    { label: "RESTAURANTES", value: "RESTAURANTES" },
+    { label: "TRANSPORTE", value: "TRANSPORTE" },
+    { label: "VESTUÁRIO", value: "VESTUÁRIO" },
+    { label: "MORADIA", value: "MORADIA" },
+    { label: "SAÚDE", value: "SAÚDE" },
+    { label: "EDUCAÇÃO", value: "EDUCAÇÃO" },
+    { label: "SERVIÇOS", value: "SERVIÇOS" },
+    { label: "INVESTIMENTOS", value: "INVESTIMENTOS" },
+    { label: "RECEBIMENTOS", value: "RECEBIMENTOS" },
+  ]
+
   const route = useRoute<TransactionDetailsRouteProp>()
   const { id } = route.params
 
@@ -49,6 +67,7 @@ const TransactionDetails: React.FC = () => {
   const [value, setValue] = useState<string>("")
   const [description, setDescription] = useState<string>("")
   const [observation, setObservation] = useState<string>("")
+  const [category, setCategory] = useState<string>("")
 
   const [showDatePicker, setShowDatePicker] = useState(false)
 
@@ -68,6 +87,7 @@ const TransactionDetails: React.FC = () => {
 
       setDescription(transaction.description)
       setObservation(transaction.observation)
+      setCategory(transaction.category)
     }
 
     loadTransactionData()
@@ -92,13 +112,17 @@ const TransactionDetails: React.FC = () => {
         observation,
         type,
         value: formattedValue,
+        category,
       }
+
+      console.log(data)
 
       const schema = Yup.object().shape({
         date: Yup.date().required("A data é obrigatória."),
         description: Yup.string().required("A descrição é obrigatória."),
         observation: Yup.string(),
         value: Yup.number().notOneOf([0, undefined], "Valor inválido."),
+        category: Yup.string().required("A categoria é obrigatória."),
       })
 
       await schema.validate(data, {
@@ -107,7 +131,12 @@ const TransactionDetails: React.FC = () => {
 
       await updateTransaction(data)
 
-      Alert.alert("Lançamento alterado com sucesso!")
+      addMessage({
+        type: "success",
+        title: "Parabéns",
+        description: "Lançamento alterado com sucesso",
+      })
+
       navigate("Dashboard")
     } catch (err) {
       let yupError: string = ""
@@ -116,12 +145,14 @@ const TransactionDetails: React.FC = () => {
         yupError = err.inner[0].message
       }
 
-      Alert.alert(
-        "Erro ao salvar edição",
-        "Ocorreu um erro ao salvar a edição do lançamento. " + yupError
-      )
+      addMessage({
+        type: "error",
+        title: "Erro ao salvar edição",
+        description:
+          "Ocorreu um erro ao salvar a edição do lançamento. " + yupError,
+      })
     }
-  }, [selectedDate, description, observation, type, value])
+  }, [selectedDate, description, observation, type, value, category])
 
   const handleDateChanged = useCallback(
     (event: any, date: Date | undefined) => {
@@ -135,6 +166,10 @@ const TransactionDetails: React.FC = () => {
     },
     []
   )
+
+  const handleCategoryChange = useCallback((transactionCategory: string) => {
+    setCategory(transactionCategory)
+  }, [])
 
   const handleTypeChange = useCallback((transactionType: string) => {
     setType(transactionType)
@@ -173,7 +208,11 @@ const TransactionDetails: React.FC = () => {
       selectedDate.getFullYear().toString()
     )
 
-    Alert.alert("Lançamento excluído com sucesso!")
+    addMessage({
+      type: "success",
+      title: "Parabéns",
+      description: "Lançamento excluído com sucesso",
+    })
     navigate("Dashboard")
   }, [selectedDate])
 
@@ -291,6 +330,24 @@ const TransactionDetails: React.FC = () => {
             height: 130,
             alignItems: "flex-start",
             paddingTop: 12,
+          }}
+        />
+
+        <ComboBox
+          data={categories}
+          iconName="tag"
+          selectionChange={handleCategoryChange}
+          value={category}
+          disabled={!editable}
+          placeholder="Selecione uma categoria"
+          dropDownStyle={{
+            height: 60,
+            backgroundColor: "#f8f8ff",
+            borderWidth: 1.5,
+            borderRadius: 10,
+            padding: 16,
+            marginBottom: 8,
+            flex: 1,
           }}
         />
 

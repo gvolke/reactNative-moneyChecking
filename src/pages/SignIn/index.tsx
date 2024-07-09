@@ -6,15 +6,12 @@ import {
   View,
   ScrollView,
   TextInput,
-  Alert,
 } from "react-native"
 import { Feather } from "@expo/vector-icons"
 import { useNavigation } from "@react-navigation/native"
 import * as Yup from "yup"
 
 import { useAuth } from "../../hooks/auth"
-
-import getValidationErrors from "../../utils/getValidationErrors"
 
 import { Form } from "@unform/mobile"
 import { FormHandles } from "@unform/core"
@@ -23,6 +20,8 @@ import Input from "../../components/InputUnform"
 import Button from "../../components/Button"
 
 import logoImg from "../../assets/Logo.png"
+
+import { useMessage } from "../../hooks/message"
 
 import {
   Container,
@@ -44,6 +43,7 @@ const SignIn: React.FC = () => {
   const navigation = useNavigation()
 
   const { signIn } = useAuth()
+  const { addMessage } = useMessage()
 
   const handleSignIn = useCallback(
     async (data: SignInFormData) => {
@@ -72,10 +72,12 @@ const SignIn: React.FC = () => {
           yupError = err.inner[0].message + "."
         }
 
-        Alert.alert(
-          "Erro no cadastro",
-          "Ocorreu um erro ao fazer login, tente novamente. " + yupError
-        )
+        addMessage({
+          type: "error",
+          title: "Erro no cadastro",
+          description:
+            "Ocorreu um erro ao fazer login, tente novamente. " + yupError,
+        })
       }
     },
     [signIn]

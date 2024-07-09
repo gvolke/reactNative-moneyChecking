@@ -15,7 +15,9 @@ import Input from "../../components/Input"
 import ComboBox from "../../components/ComboBox"
 
 import DateTimePicker from "@react-native-community/datetimepicker"
-import { Alert, Platform } from "react-native"
+import { Platform } from "react-native"
+
+import { useMessage } from "../../hooks/message"
 
 import {
   Container,
@@ -32,6 +34,22 @@ import {
 } from "./styles"
 
 const CreateTransaction: React.FC = () => {
+  const { addMessage } = useMessage()
+
+  const categories = [
+    { label: "LAZER", value: "LAZER" },
+    { label: "MERCADO", value: "MERCADO" },
+    { label: "RESTAURANTES", value: "RESTAURANTES" },
+    { label: "TRANSPORTE", value: "TRANSPORTE" },
+    { label: "VESTUÁRIO", value: "VESTUÁRIO" },
+    { label: "MORADIA", value: "MORADIA" },
+    { label: "SAÚDE", value: "SAÚDE" },
+    { label: "EDUCAÇÃO", value: "EDUCAÇÃO" },
+    { label: "SERVIÇOS", value: "SERVIÇOS" },
+    { label: "INVESTIMENTOS", value: "INVESTIMENTOS" },
+    { label: "RECEBIMENTOS", value: "RECEBIMENTOS" },
+  ]
+
   const [selectedDate, setSelectedDate] = useState(new Date())
 
   const valueInputRef = useRef<TextInput>(null)
@@ -40,6 +58,7 @@ const CreateTransaction: React.FC = () => {
 
   const [type, setType] = useState<string>("SAIDA")
   const [value, setValue] = useState<string>()
+  const [category, setCategory] = useState<string>("")
   const [description, setDescription] = useState<string>("")
   const [observation, setObservation] = useState<string>("")
 
@@ -66,6 +85,7 @@ const CreateTransaction: React.FC = () => {
         observation,
         type,
         value: formattedValue,
+        category,
       }
 
       const schema = Yup.object().shape({
@@ -73,6 +93,7 @@ const CreateTransaction: React.FC = () => {
         description: Yup.string().required("A descrição é obrigatória."),
         observation: Yup.string(),
         value: Yup.number().notOneOf([0, undefined], "Valor inválido."),
+        category: Yup.string().required("A categoria é obrigatória."),
       })
 
       await schema.validate(data, {
@@ -81,7 +102,11 @@ const CreateTransaction: React.FC = () => {
 
       await createTransaction(data)
 
-      Alert.alert("Lançamento cadastrado com sucesso!")
+      addMessage({
+        type: "success",
+        title: "Parabéns",
+        description: "Lançamento cadastrado com sucesso",
+      })
       navigate("Dashboard")
     } catch (err) {
       let yupError: string = ""
@@ -90,12 +115,13 @@ const CreateTransaction: React.FC = () => {
         yupError = err.inner[0].message
       }
 
-      Alert.alert(
-        "Erro ao criar lançamento",
-        "Ocorreu um erro ao criar o lançamento. " + yupError
-      )
+      addMessage({
+        type: "error",
+        title: "Erro ao cadastrar lançamento",
+        description: "Ocorreu um erro ao criar o lançamento. " + yupError,
+      })
     }
-  }, [selectedDate, description, observation, type])
+  }, [selectedDate, description, observation, type, category])
 
   const handleDateChanged = useCallback(
     (event: any, date: Date | undefined) => {
@@ -109,6 +135,10 @@ const CreateTransaction: React.FC = () => {
     },
     []
   )
+
+  const handleCategoryChange = useCallback((transactionCategory: string) => {
+    setCategory(transactionCategory)
+  }, [])
 
   const handleTypeChange = useCallback((transactionType: string) => {
     setType(transactionType)
@@ -242,6 +272,23 @@ const CreateTransaction: React.FC = () => {
             height: 130,
             alignItems: "flex-start",
             paddingTop: 12,
+          }}
+        />
+
+        <ComboBox
+          data={categories}
+          iconName="tag"
+          selectionChange={handleCategoryChange}
+          value={category}
+          placeholder="Selecione uma categoria"
+          dropDownStyle={{
+            height: 60,
+            backgroundColor: "#f8f8ff",
+            borderWidth: 1.5,
+            borderRadius: 10,
+            padding: 16,
+            marginBottom: 8,
+            flex: 1,
           }}
         />
 
