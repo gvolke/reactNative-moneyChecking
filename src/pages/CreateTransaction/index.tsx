@@ -50,8 +50,6 @@ const CreateTransaction: React.FC = () => {
     { label: "RECEBIMENTOS", value: "RECEBIMENTOS" },
   ]
 
-  const [selectedDate, setSelectedDate] = useState(new Date())
-
   const valueInputRef = useRef<TextInput>(null)
   const descriptionInputRef = useRef<TextInput>(null)
   const observationInputRef = useRef<TextInput>(null)
@@ -66,7 +64,11 @@ const CreateTransaction: React.FC = () => {
 
   const { goBack, navigate } = useNavigation<any>()
   const { user } = useAuth()
-  const { createTransaction } = useTransaction()
+  const { createTransaction, month, year } = useTransaction()
+
+  const [selectedDate, setSelectedDate] = useState(
+    new Date(Number(year), month - 1, 1)
+  )
 
   const navigateBack = useCallback(() => {
     goBack()

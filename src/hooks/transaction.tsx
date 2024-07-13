@@ -41,6 +41,7 @@ interface TransactionsContextData {
   transactions: TransactionBalance[]
   month: number
   year: string
+  setMonthYear(month: number, year: string): void
   fetchTransactions({ month, year }: fetchTransactionData): Promise<void>
   createTransaction(data: createTransactionData): Promise<TransactionBalance>
   showTransaction(transactionId: string): Promise<Transaction>
@@ -150,12 +151,18 @@ export const TransactionsProvider: React.FC<Props> = ({ children }) => {
     []
   )
 
+  const setMonthYear = useCallback((month: number, year: string): void => {
+    setMonth(month)
+    setYear(year)
+  }, [])
+
   return (
     <TransactionsContext.Provider
       value={{
         transactions,
         month,
         year,
+        setMonthYear,
         fetchTransactions,
         createTransaction,
         showTransaction,

@@ -64,7 +64,8 @@ export interface Transaction {
 const Dashboard: React.FC = () => {
   const yearInputRef = useRef<TextInput>(null)
 
-  const { transactions, month, year, fetchTransactions } = useTransaction()
+  const { transactions, month, year, setMonthYear, fetchTransactions } =
+    useTransaction()
 
   const [selectedMonth, setSelectedMonth] = useState<number>(month)
   const [selectedYear, setYear] = useState<string>(year)
@@ -107,8 +108,9 @@ const Dashboard: React.FC = () => {
   }, [navigate])
 
   const navigateToCreateTransaction = useCallback(() => {
+    setMonthYear(selectedMonth, selectedYear)
     navigate("CreateTransaction")
-  }, [navigate])
+  }, [navigate, selectedMonth, selectedYear])
 
   const navigateToTransactionDetails = useCallback(
     (transactionId: string) => {
