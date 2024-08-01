@@ -74,7 +74,7 @@ const SignIn: React.FC = () => {
 
         addMessage({
           type: "error",
-          title: "Erro no cadastro",
+          title: "Erro no login",
           description:
             "Ocorreu um erro ao fazer login, tente novamente. " + yupError,
         })

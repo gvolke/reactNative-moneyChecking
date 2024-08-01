@@ -81,8 +81,19 @@ const CreateTransaction: React.FC = () => {
         formattedValue = 0
       }
 
+      const nowDate = new Date()
+
+      const formattedDate = new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth(),
+        selectedDate.getDate(),
+        nowDate.getHours(),
+        nowDate.getMinutes(),
+        nowDate.getSeconds()
+      )
+
       const data = {
-        date: selectedDate,
+        date: formattedDate,
         description,
         observation,
         type,
@@ -123,7 +134,7 @@ const CreateTransaction: React.FC = () => {
         description: "Ocorreu um erro ao criar o lançamento. " + yupError,
       })
     }
-  }, [selectedDate, description, observation, type, category])
+  }, [selectedDate, description, value, observation, type, category])
 
   const handleDateChanged = useCallback(
     (event: any, date: Date | undefined) => {

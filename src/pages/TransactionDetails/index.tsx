@@ -105,9 +105,20 @@ const TransactionDetails: React.FC = () => {
         formattedValue = 0
       }
 
+      const nowDate = new Date()
+
+      const formattedDate = new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth(),
+        selectedDate.getDate(),
+        nowDate.getHours(),
+        nowDate.getMinutes(),
+        nowDate.getSeconds()
+      )
+
       const data = {
         id,
-        date: selectedDate,
+        date: formattedDate,
         description,
         observation,
         type,
