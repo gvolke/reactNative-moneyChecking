@@ -1,16 +1,16 @@
 {
   "expo": {
-    "name": "moneychecking",
+    "name": "Money Checking",
     "slug": "moneychecking",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "jsEngine": "hermes",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/Logo.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/loading.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#00A6FF"
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
@@ -18,12 +18,14 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/Logo.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": ["android.permission.RECORD_AUDIO"],
+      "package": "com.gvolke.moneychecking"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/icon.png"
     },
     "plugins": [
       [
@@ -32,6 +34,11 @@
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "4482626e-b90c-493a-9d6b-3f66310c8dd3"
+      }
+    }
   }
 }
