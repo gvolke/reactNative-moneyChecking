@@ -141,11 +141,12 @@ const Profile: React.FC = () => {
 
     if (!result.canceled) {
       const fileURL = result.assets[0].uri
+
       const data = new FormData()
       data.append("avatar", {
         uri: fileURL,
         type: "image/" + fileURL.split(".").pop(),
-        name: user.id,
+        name: user.id + "." + fileURL.split(".").pop(),
       })
 
       api
