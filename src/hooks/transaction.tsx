@@ -44,6 +44,7 @@ interface TransactionsContextData {
   setMonthYear(month: number, year: string): void
   fetchTransactions({ month, year }: fetchTransactionData): Promise<void>
   createTransaction(data: createTransactionData): Promise<TransactionBalance>
+  createTransactions(data: createTransactionData[]): Promise<Transaction[]>
   showTransaction(transactionId: string): Promise<Transaction>
   updateTransaction(transaction: Transaction): Promise<Transaction>
   deleteTransaction(
@@ -99,6 +100,21 @@ export const TransactionsProvider: React.FC<Props> = ({ children }) => {
 
     return transaction
   }, [])
+
+  const createTransactions = useCallback(
+    async (data: createTransactionData[]) => {
+      const response = await api.post("transactions/many", data)
+      const transactions = await response.data
+
+      fetchTransactions({
+        month,
+        year,
+      })
+
+      return transactions
+    },
+    []
+  )
 
   const showTransaction = useCallback(
     async (transactionId: string): Promise<Transaction> => {
@@ -165,6 +181,7 @@ export const TransactionsProvider: React.FC<Props> = ({ children }) => {
         setMonthYear,
         fetchTransactions,
         createTransaction,
+        createTransactions,
         showTransaction,
         updateTransaction,
         deleteTransaction,

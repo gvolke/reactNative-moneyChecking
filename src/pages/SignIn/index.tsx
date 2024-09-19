@@ -118,6 +118,7 @@ const SignIn: React.FC = () => {
                 ref={passwordInputRef}
                 name="password"
                 icon="lock"
+                autoCapitalize="none"
                 placeholder="Senha"
                 secureTextEntry
                 returnKeyType="send"

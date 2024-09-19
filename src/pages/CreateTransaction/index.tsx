@@ -48,14 +48,17 @@ const CreateTransaction: React.FC = () => {
     { label: "SERVIÇOS", value: "SERVIÇOS" },
     { label: "INVESTIMENTOS", value: "INVESTIMENTOS" },
     { label: "RECEBIMENTOS", value: "RECEBIMENTOS" },
+    { label: "DOAÇÕES", value: "DOAÇÕES" },
   ]
 
   const valueInputRef = useRef<TextInput>(null)
+  const parcelInputRef = useRef<TextInput>(null)
   const descriptionInputRef = useRef<TextInput>(null)
   const observationInputRef = useRef<TextInput>(null)
 
   const [type, setType] = useState<string>("SAIDA")
   const [value, setValue] = useState<string>()
+  const [parcel, setParcel] = useState<string>("1")
   const [category, setCategory] = useState<string>("")
   const [description, setDescription] = useState<string>("")
   const [observation, setObservation] = useState<string>("")
@@ -64,7 +67,7 @@ const CreateTransaction: React.FC = () => {
 
   const { goBack, navigate } = useNavigation<any>()
   const { user } = useAuth()
-  const { createTransaction, month, year } = useTransaction()
+  const { createTransactions, month, year } = useTransaction()
 
   const [selectedDate, setSelectedDate] = useState(
     new Date(Number(year), month - 1, 1)
@@ -79,6 +82,11 @@ const CreateTransaction: React.FC = () => {
       let formattedValue = Number(value)
       if (isNaN(formattedValue)) {
         formattedValue = 0
+      }
+
+      let formattedParcel = 1
+      if (Number(parcel)) {
+        formattedParcel = Number(parcel)
       }
 
       const nowDate = new Date()
@@ -113,12 +121,29 @@ const CreateTransaction: React.FC = () => {
         abortEarly: false,
       })
 
-      await createTransaction(data)
+      const transactionsArray = []
+      for (let i = 0; i < formattedParcel; i++) {
+        const newDate = new Date(data.date)
+        newDate.setMonth(newDate.getMonth() + i)
+
+        transactionsArray.push(
+          Object.assign({}, data, {
+            date: newDate,
+            description:
+              description +
+              (formattedParcel > 1
+                ? " - Parcela " + (i + 1) + "/" + parcel
+                : ""),
+          })
+        )
+      }
+
+      await createTransactions(transactionsArray)
 
       addMessage({
         type: "success",
         title: "Parabéns",
-        description: "Lançamento cadastrado com sucesso",
+        description: "Lançamento(s) cadastrado(s) com sucesso",
       })
       navigate("Dashboard")
     } catch (err) {
@@ -134,7 +159,7 @@ const CreateTransaction: React.FC = () => {
         description: "Ocorreu um erro ao criar o lançamento. " + yupError,
       })
     }
-  }, [selectedDate, description, value, observation, type, category])
+  }, [selectedDate, description, value, parcel, observation, type, category])
 
   const handleDateChanged = useCallback(
     (event: any, date: Date | undefined) => {
@@ -159,6 +184,10 @@ const CreateTransaction: React.FC = () => {
 
   const handleValueChange = useCallback((transactionValue: string) => {
     setValue(transactionValue)
+  }, [])
+
+  const handleParcelChange = useCallback((transactionParcel: string) => {
+    setParcel(transactionParcel)
   }, [])
 
   const handleDescriptionChange = useCallback(
@@ -234,8 +263,8 @@ const CreateTransaction: React.FC = () => {
             borderWidth: 1.5,
             borderRadius: 10,
             padding: 16,
-            flex: 1,
-            marginRight: 8,
+            flex: 2,
+            marginRight: 5,
             marginBottom: 8,
           }}
         />
@@ -246,8 +275,25 @@ const CreateTransaction: React.FC = () => {
           icon="dollar-sign"
           placeholder="Valor"
           onChangeText={handleValueChange}
-          onSubmitEditing={descriptionInputRef.current?.focus}
+          onSubmitEditing={parcelInputRef.current?.focus}
           value={value}
+          returnKeyType="next"
+          keyboardType="decimal-pad"
+          containerStyle={{
+            flex: 2,
+            alignItems: "center",
+            marginRight: 5,
+          }}
+        />
+
+        <Input
+          ref={parcelInputRef}
+          name="parcel"
+          icon="calendar"
+          placeholder="X"
+          onChangeText={handleParcelChange}
+          onSubmitEditing={descriptionInputRef.current?.focus}
+          value={parcel}
           returnKeyType="next"
           keyboardType="decimal-pad"
           containerStyle={{
